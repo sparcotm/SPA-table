@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=	, initial-scale=1.0">
+	<title>Vue</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	
+	
+
+		<div id="Table">
+		   <table>
+		     <thead>
+		       <tr>
+		         <th v-for="col in columns" v-on:click="sortTable(col)">{{col}}
+		           <div class="arrow" v-if="col == sortColumn" v-bind:class="[ascending ? 'arrow_up' : 'arrow_down']"></div>
+		         </th>
+		       </tr>
+		     </thead>
+		     <tbody>
+		       <tr v-for="row in get_rows()">
+		         <td v-for="col in columns">{{row[col]}}</td>
+		       </tr>
+		     </tbody>
+		  </table>
+		  <div class="pagination">
+		    <div class="number"
+		         v-for="i in num_pages()"
+		         v-bind:class="[i == currentPage ? 'active' : '']"
+		         v-on:click="change_page(i)">{{i}}</div>
+		  </div>
+		</div>
+
+
+	
+
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script>
+
+	const Table = new Vue({
+	  el: '#Table',
+	  data: {
+	    currentPage: 1,
+	    elementsPerPage: 5,
+	    ascending: false,
+	    sortColumn: '',
+	    rows: [
+	      { date: "2012 03 11", name: "Chandler Bing", count: 305, length: 31 },
+	      { date: "2013 03 11", name: "Ross Geller", count: 210, length: 318 },
+	      { date: "2013 03 13", name: "Rachel Green", count: 765, length: 423},
+	      { date: "2013 03 10", name: "Monica Geller", count: 714, length: 32 },
+	      { date: "2013 04 11", name: "Joey Tribbiani", count: 972, length: 523 },
+	      { date: "2020 12 30", name: "Phoebe Buffay", count: 760, length: 343 },
+	      { date: "2013 04 06", name: "Joy Biani", count: 92, length: 173 },
+	      { date: "2013 08 11", name: "Grey Tom", count: 872, length: 623 },
+	      { date: "2015 04 11", name: "Tim Lanister", count: 358, length: 423 },
+	      { date: "2014 04 11", name: "John Trib", count: 632, length: 512 },
+	    ]
+	  },
+	  methods: {
+	    "sortTable": function sortTable(col) {
+	      if (this.sortColumn === col) {
+	        this.ascending = !this.ascending;
+	      } else {
+	        this.ascending = true;
+	        this.sortColumn = col;
+	      }
+
+	      const ascending = this.ascending;
+
+	      this.rows.sort(function(a, b) {
+	        if (a[col] > b[col]) {
+	          return ascending ? 1 : -1
+	        } else if (a[col] < b[col]) {
+	          return ascending ? -1 : 1
+	        }
+	        return 0;
+	      })
+	    },
+	    "num_pages": function num_pages() {
+	      return Math.ceil(this.rows.length / this.elementsPerPage);
+	    },
+	    "get_rows": function get_rows() {
+	      const start = (this.currentPage-1) * this.elementsPerPage;
+	      const end = start + this.elementsPerPage;
+	      return this.rows.slice(start, end);
+	    },
+
+	    "change_page": function change_page(page) {
+	      this.currentPage = page;
+	    }
+	  },
+	  computed: {
+	    "columns": function columns() {
+	      if (this.rows.length == 0) {
+	        return [];
+	      }
+	      return Object.keys(this.rows[0])
+	    }
+    }
+	});
+
+</script>
+<style>
+	
+</style>
+</body>
+</html>
